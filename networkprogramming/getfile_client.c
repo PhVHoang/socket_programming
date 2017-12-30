@@ -17,6 +17,10 @@ char* concat(const char *s1, const char *s2);
 int main(int argc, char* argv[]) {
 	//write an infinite loop for client
 
+	// welcome
+	printf("Welcome to our files manager system\n");
+	printf("If you have any problem with our system, please contact to admin via address : \nPhuong Uyen : VNC K59\n");
+	int choice;
 	int sock_fd;
 	struct sockaddr_in srv_addr;
 	if (argc < 4) {
@@ -64,7 +68,7 @@ int recv_file(int sock, char* file_name, char* newfilename) {
 		return -1;
 	}
 	/* attempt to create file to save received data. 0644 = rw-r--r-- */
-	printf("Server is sending file : %s\n", file_name);
+	printf("Downloading file : %s\n", file_name);
 	if ( (f = open(newfilename, O_WRONLY|O_CREAT, 0644)) < 0 ) {
 		perror("error creating file");
 		return -1;

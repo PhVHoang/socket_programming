@@ -34,12 +34,13 @@ int main(int argc, char **argv) {
     struct sockaddr_in client_address;
     unsigned short server_port = 12345u;
 
-    if (argc > 1) {
-        file_path = argv[1];
-        if (argc > 2) {
-            server_port = strtol(argv[2], NULL, 10);
-        }
-    }
+    // if (argc > 1) {
+    //     file_path = argv[1];
+    //     if (argc > 2) {
+    //         server_port = strtol(argv[1], NULL, 10);
+    //     }
+    // }
+    char file_name[MAX_RECV_BUF]; /*Name of the file to be received*/
     server_sockfd = listen_port(protoname, server_port);
     while (1) {
         client_len = sizeof(client_address);
@@ -76,3 +77,4 @@ int main(int argc, char **argv) {
     close(server_sockfd);
     return EXIT_SUCCESS;
 }
+

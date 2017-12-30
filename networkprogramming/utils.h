@@ -1,15 +1,15 @@
-#ifndef COMMON_H
-#define COMMON_H
-
+#ifndef UTILS
+#define UTILS
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
 #include <arpa/inet.h>
 #include <netdb.h> /* getprotobyname */
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <fcntl.h>
 #include <unistd.h>
-
+#define SRV_PORT 5103
 #define MAX_RECV_BUF 256
 #define MAX_SEND_BUF 256
 
@@ -120,15 +120,39 @@ int connect_server(char *protoname, char *server_hostname, unsigned int port) {
     return sockfd;
 }
 
-void get_file_name(int sock, char* file_name) {
-	char recv_str[MAX_RECV_BUF]; /* to store received string */
-	ssize_t rcvd_bytes; /* bytes received from socket */
-	/* read name of requested file from socket */
-	if ( (rcvd_bytes = recv(sock, recv_str, MAX_RECV_BUF, 0)) < 0) {
-		perror("recv error");
-		return;
+int recv_file(int sock, char* file_name, char* newfilename) {
+	char send_str [MAX_SEND_BUF]; /* message to be sent to server*/
+	int f; /* file handle for receiving file*/
+	ssize_t sent_bytes, rcvd_bytes, rcvd_file_size;
+	int recv_count; /* count of recv() calls*/
+	char recv_str[MAX_RECV_BUF]; /* buffer to hold received data */
+	size_t send_strlen; /* length of transmitted string */
+	sprintf(send_str, "%s\n", file_name); /* add CR/LF (new line) */
+	send_strlen = strlen(send_str); /* length of message to be transmitted */
+	if( (sent_bytes = send(sock, file_name, send_strlen, 0)) < 0 ) {
+		perror("send error");
+		return -1;
 	}
-	sscanf (recv_str, "%s\n", file_name); /* discard CR/LF */
+	/* attempt to create file to save received data. 0644 = rw-r--r-- */
+	printf("Server is sending file : %s\n", file_name);
+	if ( (f = open(newfilename, O_WRONLY|O_CREAT, 0644)) < 0 ) {
+		perror("error creating file");
+		return -1;
+	}
+	recv_count = 0; /* number of recv() calls required to receive the file */
+	rcvd_file_size = 0; /* size of received file */
+	/* continue receiving until ? (data or close) */
+	while ( (rcvd_bytes = recv(sock, recv_str, MAX_RECV_BUF, 0)) > 0 ) {
+		recv_count++;
+		rcvd_file_size += rcvd_bytes;
+		if (write(f, recv_str, rcvd_bytes) < 0 ) {
+			perror("error writing to file");
+			return -1;
+		}
+	}
+	close(f); /* close file*/
+	printf("Client Received: %d bytes in %d recv(s)\n", rcvd_file_size, recv_count);
+	return rcvd_file_size;
 }
 
 
