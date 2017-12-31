@@ -71,30 +71,18 @@ int main(int argc, char* argv[]){
 	char buff[BUFF_SIZE], filelink[BUFF_SIZE], filename[BUFF_SIZE], *data;
 	struct sockaddr_in server_addr; /* server's address information */
 	int serv_port = 5550;
-	char* serv_ip="127.0.0.1";
+	char serv_ip_child[16];
 	char *endptr;
 	FILE *fp = NULL;
 	int errnum;
 	double bytes_transfered = 0;
-	
-	// Step 0: Initialization
-	// if(argc != 3){
-	// 	printf("Invalid arguments!\n");
-	// 	exit(-1);
-	// }
-
-	// strcpy(serv_ip, argv[1]);
-	// serv_port = (in_port_t) strtol(argv[2], &endptr, 10);
-	// if(strlen(endptr) != 0){
-	// 	printf("Invalid port!\n");
-	// 	exit(-1);
-	// }
+	strcpy(serv_ip_child, argv[1]);
 	client_sock = socket(AF_INET,SOCK_STREAM,0);
 	
 	//Step 2: Specify server address
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(serv_port);
-	server_addr.sin_addr.s_addr = inet_addr(serv_ip);
+	server_addr.sin_addr.s_addr = inet_addr(serv_ip_child);
 	
 	//Step 3: Request to connect server
 	if(connect(client_sock, (struct sockaddr*)&server_addr, sizeof(struct sockaddr)) < 0){
@@ -175,22 +163,13 @@ int main(int argc, char* argv[]){
 					}
 				}
 				fclose(fp);
-				// break;
-			// case 2:
-			// 	printf("See you again\n");
 				close(client_sock);
 		}
 		else if (choice == 2) break;
 		else {	
 			printf("Wrong choice. Please check your choice again and guarantee that choice = 1 or choice = 2. \n");
-
 			continue;
 
-
-	
-			// 	break;
-			// default:
-			// 	printf("Wrong choice. Please enter either 1 or 2 or 3.\n");
 		}
 	}
 	return 0;

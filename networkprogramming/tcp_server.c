@@ -6,6 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include "util_libraries/common.h"
 
 #define BACKLOG 2   /* Number of allowed connections */
 #define BUFF_SIZE 102400
@@ -77,22 +78,22 @@ int main(int argc, char* argv[])
 	struct sockaddr_in server; /* server's address information */
 	struct sockaddr_in client; /* client's address information */
 	int sin_size;
-	int serv_port;
+	// int serv_port;
 	char *endptr, *data;
 	char error_message[STRING_SIZE];
 	FILE *fp = NULL;
 	double bytes_tranfered = 0;
 
 	// Step 0: Initialization
-	if(argc != 2){
-		printf("Invalid arguments\n");
-		exit(-1);
-	}
-	serv_port = (in_port_t) strtol(argv[1], &endptr, 10);
-	if(strlen(endptr) != 0){
-		printf("Invalid port!\n");
-		exit(-1);
-	}
+	// if(argc != 2){
+	// 	printf("Invalid arguments\n");
+	// 	exit(-1);
+	// }
+	// serv_port = (in_port_t) strtol(argv[1], &endptr, 10);
+	// if(strlen(endptr) != 0){
+	// 	printf("Invalid port!\n");
+	// 	exit(-1);
+	// }
 
 	//Step 1: Construct a TCP socket to listen connection request
 	if ((listen_sock = socket(AF_INET, SOCK_STREAM, 0)) == -1 ){  /* calls socket() */
@@ -115,8 +116,11 @@ int main(int argc, char* argv[])
 		perror("\nError: ");
 		return 0;
 	}
-	
+	// pid for child process
+
+	pid_t child_pid;
 	//Step 4: Communicate with client
+	signal(SIGCHLD, sig_chld);
 	while(1){
 		//accept request
 		sin_size = sizeof(struct sockaddr_in);
@@ -126,7 +130,9 @@ int main(int argc, char* argv[])
 		printf("You got a connection from %s\n", inet_ntoa(client.sin_addr) ); /* prints client's IP */
 		
 		//start conversation
-		while(1){
+		
+		if ((child_pid = fork()) == 0) {
+			while(1){
 			// Step 5: Receive filename from client
 			if((data = recv_msg(conn_sock, &errnum, &msg_len)) ){
 				printf("Filename : %s\n", data);
@@ -160,9 +166,19 @@ int main(int argc, char* argv[])
 				break;
 			}
 		}//end conversation
+		}
 		close(conn_sock);	
 	}
 	
 	close(listen_sock);
 	return 0;
+}
+
+void sig_chld(int signo) {
+    pid_t pid;
+	int stat;
+	while ( (pid = waitpid(-1, &stat, WNOHANG)) > 0)
+		printf("child %d terminated\n", pid);
+	/* for debugging only, i/o not recommended here */
+	return;
 }

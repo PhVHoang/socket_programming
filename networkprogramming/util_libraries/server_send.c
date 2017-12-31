@@ -53,32 +53,6 @@ void main_server_send(int listen_fd, int conn_fd, struct sockaddr_in srv_addr, s
 	char file_name [MAX_RECV_BUF]; /* name of the file to be sent */
 	char print_addr [INET_ADDRSTRLEN]; /* readable IP address */
 
-    // For initalization
-    // ***************************************
-	// memset(&srv_addr, 0, sizeof(srv_addr)); /* zero-fill srv_addr structure*/
-	// memset(&cli_addr, 0, sizeof(cli_addr)); /* zero-fill cli_addr structure*/
-	// srv_addr.sin_family = AF_INET;
-	// srv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	// /* if port number supplied, use it, otherwise use SRV_PORT */
-	// srv_addr.sin_port = serv_port;
-	// if ( (listen_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
-	// 	perror("socket error");
-	// 	exit(EXIT_FAILURE);
-	// }
-	// /* bind to created socket */
-	// if( bind(listen_fd, (struct sockaddr*) &srv_addr, sizeof(srv_addr)) < 0 ){
-	// 	perror("bind error");
-	// 	exit(EXIT_FAILURE);
-	// }
-	// printf("Listening on port number %d ...\n", ntohs(srv_addr.sin_port));
-	// if( listen(listen_fd, LISTEN_ENQ) < 0 ) {
-	// 	perror("listen error");
-	// 	exit(EXIT_FAILURE);
-	// }
-    //*****************************************
-	/* install signal handler */
-    
-	signal (SIGCHLD, sig_chld);
 	for( ; ; ) /* run forever*/ {
 		cli_len = sizeof(cli_addr);
 		printf ("Waiting for a client to connect...\n\n");
