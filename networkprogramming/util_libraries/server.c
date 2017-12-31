@@ -30,14 +30,6 @@ int main() {
     return 0;
 }
 
-void sig_chld(int signo) {
-    pid_t pid;
-	int stat;
-	while ( (pid = waitpid(-1, &stat, WNOHANG)) > 0)
-		printf("child %d terminated\n", pid);
-	/* for debugging only, i/o not recommended here */
-	return;
-}
 
 void echo(int sockfd) {
 	char buff[BUFF_SIZE];
