@@ -111,6 +111,11 @@ void set_null(char **ptr) {
 int main(int argc, const char* argv[]) {
 
     /*Initialize*/
+    if (argc < 2) {
+        printf("Invalid Arugment !\n");
+        return 0;
+    }
+    strcpy(serv_ip_child, argv[1]);
     memset(&server_addr, 0, sizeof(server_addr)); 
     conn_sock = socket(AF_INET,SOCK_STREAM,0);
 	
