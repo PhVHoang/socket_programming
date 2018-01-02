@@ -11,7 +11,7 @@
 #define BACKLOG 2   /* Number of allowed connections */
 #define BUFF_SIZE 102400
 #define STRING_SIZE 819600
-
+#define serv_port 5550
 char *recv_msg(int conn_sock, int *errnum, int *msg_len){
 	int ret, nLeft, index = 0;
 	char recv_data[BUFF_SIZE], *data;
@@ -84,17 +84,6 @@ int main(int argc, char* argv[])
 	FILE *fp = NULL;
 	double bytes_tranfered = 0;
 
-	// Step 0: Initialization
-	// if(argc != 2){
-	// 	printf("Invalid arguments\n");
-	// 	exit(-1);
-	// }
-	// serv_port = (in_port_t) strtol(argv[1], &endptr, 10);
-	// if(strlen(endptr) != 0){
-	// 	printf("Invalid port!\n");
-	// 	exit(-1);
-	// }
-
 	//Step 1: Construct a TCP socket to listen connection request
 	if ((listen_sock = socket(AF_INET, SOCK_STREAM, 0)) == -1 ){  /* calls socket() */
 		perror("\nError: ");
@@ -132,6 +121,7 @@ int main(int argc, char* argv[])
 		//start conversation
 		
 		if ((child_pid = fork()) == 0) {
+			// close(listen_sock);
 			while(1){
 			// Step 5: Receive filename from client
 			if((data = recv_msg(conn_sock, &errnum, &msg_len)) ){
@@ -165,6 +155,7 @@ int main(int argc, char* argv[])
 			}else{
 				break;
 			}
+		exit(0);
 		}//end conversation
 		}
 		close(conn_sock);	

@@ -65,14 +65,12 @@ void main_server_receive(int listen_sock, int conn_sock, struct sockaddr_in serv
 	// struct sockaddr_in client; /* client's address information */
 	int sin_size;
 	int child_pid;
-	// int serv_port;
 	char *endptr, *data;
 	char error_message[STRING_SIZE];
 	FILE *fp = NULL;
 	double bytes_tranfered = 0;
 
-	signal(SIGCHLD, sig_chld);
-	while(1){
+	// while(1){
 		//accept request
 		sin_size = sizeof(struct sockaddr_in);
 		if ((conn_sock = accept(listen_sock,( struct sockaddr *)&client, &sin_size)) == -1) 
@@ -84,21 +82,21 @@ void main_server_receive(int listen_sock, int conn_sock, struct sockaddr_in serv
 		if ((child_pid = fork()) == 0) {
 			while(1){
 			// Step 5: Receive filename from client
-			if((data = recv_msg(conn_sock, &errnum, &msg_len)) ){
+			if((data = recv_msg_server(conn_sock, &errnum, &msg_len)) ){
 				printf("Filename : %s\n", data);
 				// if file already exists on the server
 				if((fp = fopen(data, "rb"))){
 					strcpy(error_message, "1");
-					send_msg(conn_sock, error_message);
+					send_msg_server(conn_sock, error_message);
 					continue;
 				}else{// if not
 					fp = fopen(data, "wb+");
 					strcpy(error_message, "0");
-					send_msg(conn_sock, error_message);
+					send_msg_server(conn_sock, error_message);
 					bytes_tranfered = 0;
 					
 					while(strcmp(error_message, "0") == 0){		// while there's no error
-						data = recv_msg(conn_sock, &errnum, &msg_len);
+						data = recv_msg_server(conn_sock, &errnum, &msg_len);
 						if(data != NULL && errnum == 0){		// if file content is received
 							printf("Received: %.2lf MB\n", (bytes_tranfered += msg_len) / (1024 * 1024));
 							fwrite(data, msg_len, 1, fp);
@@ -109,17 +107,17 @@ void main_server_receive(int listen_sock, int conn_sock, struct sockaddr_in serv
 							strcpy(error_message, "2");
 							fclose(fp);
 						}
-						send_msg(conn_sock, error_message);
+						send_msg_server(conn_sock, error_message);
 					}
 				}	
 			} else{
 				break;
 			}
-		}//end conversation
+		// }//end conversation
 		}
 		
 		close(conn_sock);	
 	}
 	
-	close(listen_sock);
+	//close(listen_sock);
 }

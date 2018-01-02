@@ -1,6 +1,6 @@
 #include "client_upload.h"
 
-char *recv_msg(int conn_sock){
+char *recv_msg_client(int conn_sock){
 	int ret, nLeft, msg_len, index = 0;
 	char recv_data[WINDOW_SIZE], *data;
 	// receive the length of message
@@ -27,7 +27,7 @@ char *recv_msg(int conn_sock){
 	return data;
 }
 
-int send_msg(int conn_sock, char *message, int msg_len){
+int send_msg_client(int conn_sock, char *message, int msg_len){
 	int bytes_sent;
 	//send the length of the message to server
 	bytes_sent = send(conn_sock, &msg_len, sizeof(int), 0);
@@ -57,42 +57,13 @@ void enter_path_file() {
 }
 
 void main_client_upload(int client_sock, struct sockaddr_in server_addr) {
-    // int client_sock;
+	
 	char buff[BUFF_SIZE], filelink[BUFF_SIZE], filename[BUFF_SIZE], *data;
-	// struct sockaddr_in server_addr; /* server's address information */
-	// int serv_port = 5550;
-	// char* serv_ip="127.0.0.1";
 	char *endptr;
 	FILE *fp = NULL;
 	int errnum;
 	double bytes_transfered = 0;
 	
-	// Step 0: Initialization
-	// if(argc != 3){
-	// 	printf("Invalid arguments!\n");
-	// 	exit(-1);
-	// }
-
-	// strcpy(serv_ip, argv[1]);
-	// serv_port = (in_port_t) strtol(argv[2], &endptr, 10);
-	// if(strlen(endptr) != 0){
-	// 	printf("Invalid port!\n");
-	// 	exit(-1);
-	// }
-	client_sock = socket(AF_INET,SOCK_STREAM,0);
-	
-	//Step 2: Specify server address
-	server_addr.sin_family = AF_INET;
-	server_addr.sin_port = htons(serv_port);
-	server_addr.sin_addr.s_addr = inet_addr(serv_ip);
-	
-	//Step 3: Request to connect server
-	if(connect(client_sock, (struct sockaddr*)&server_addr, sizeof(struct sockaddr)) < 0){
-		printf("\nError!Can not connect to sever! Client exit imediately! ");
-		return 0;
-	}
-		
-	//Step 4: Communicate with server			
     int choice;
     while(1) {
         printf("Enter 1 if you want to upload single file\nEnter 2 if you want to disconnect with server\n\n");
@@ -111,21 +82,34 @@ void main_client_upload(int client_sock, struct sockaddr_in server_addr) {
 				buff[strlen(buff) - 1] = '\0';
 				if (strlen(buff) == 0) break;
 				strcpy(filelink, buff);
-
+				printf("Filelink: %s\n", filelink);
+				printf("length of filelink: %d\n",strlen(filelink));
+				// char test_concat[BUFF_SIZE];
+				// strcpy(test_concat, filelink);
+				// printf("test_concat: %s\n", test_concat);
+				// concat("1", test_concat);
+				// printf("test concat: %s", test_concat);
 				if((fp = fopen(filelink, "rb")) == NULL){
 					printf("Error: File not found\n");
 					continue;
 				}else{
-					// Step 5: Send filename to server
-					// extract filename from link
 					strcpy(filename, rindex(filelink, '/') + 1);
+					printf("filename :%s\n", filename);
 					// send filename to server
-					if(send_msg(client_sock, filename, strlen(filename)) == -1){
+					char add_1[2] = "1";
+					char* extended_filename = malloc(sizeof(char)*BUFF_SIZE);
+					extended_filename = strcat(add_1, filename);
+					
+					printf("filename : %s\n", filename);
+					
+					if(send_msg_client(client_sock, extended_filename, strlen(filename)+1) == -1){
 						continue;
 					}
 					// Step 6: Check error message from server
 					// receive error message from the server
-					data = recv_msg(client_sock);
+					data = malloc(sizeof(char));
+					data = recv_msg_client(client_sock);
+					printf("error: %s\n", data);
 					errnum = atoi(data);
 					if(errnum == 1){		// if file is existent on server
 						printf("Error: File is existent on server\n");
@@ -134,19 +118,20 @@ void main_client_upload(int client_sock, struct sockaddr_in server_addr) {
 							memset(buff,'\0', BUFF_SIZE);
 							if(fread(buff, BUFF_SIZE, 1, fp) == 1){
 								// send the block to server
-								if(send_msg(client_sock, buff, sizeof(buff)) == -1){
+								if(send_msg_client(client_sock, buff, sizeof(buff)) == -1){
 									break;
 								}
 								printf("Transfered: %.2lf MB\n", (bytes_transfered += sizeof(buff)) / (1024*1024));
 							}else{
 								// tell server that EOF has been reached
-								if(send_msg(client_sock, buff, sizeof(buff)) == -1){
+								if(send_msg_client(client_sock, buff, sizeof(buff)) == -1){
 									break;
 								}
 								printf("Transfered: %.2lf MB\n", (bytes_transfered += sizeof(buff)) / (1024*1024));
 								
 								// check if there is any error
-								data = recv_msg(client_sock);
+		
+								data = recv_msg_client(client_sock);
 								errnum = atoi(data);
 
 								if(send_eof_msg(client_sock) == -1){
@@ -154,7 +139,7 @@ void main_client_upload(int client_sock, struct sockaddr_in server_addr) {
 								}
 							}
 							// check if there is any error
-							data = recv_msg(client_sock);
+							data = recv_msg_client(client_sock);
 							errnum = atoi(data);
 						}
 						if(errnum == -1){
@@ -165,22 +150,19 @@ void main_client_upload(int client_sock, struct sockaddr_in server_addr) {
 					}
 				}
 				fclose(fp);
-				// break;
-			// case 2:
-			// 	printf("See you again\n");
 				close(client_sock);
 		}
 		else if (choice == 2) break;
 		else {	
 			printf("Wrong choice. Please check your choice again and guarantee that choice = 1 or choice = 2. \n");
-
 			continue;
-
-
-	
-			// 	break;
-			// default:
-			// 	printf("Wrong choice. Please enter either 1 or 2 or 3.\n");
 		}
 	}
+}
+
+void concat(const char *s1,  char s2[BUFF_SIZE]) {
+    for (int i = 0; i < strlen(s2); i++) {
+		strcpy(&s2[i+1], &s2[i]);
+	}
+	strcpy(&s2[0], s1);
 }

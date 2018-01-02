@@ -53,18 +53,18 @@ void main_server_send(int listen_fd, int conn_fd, struct sockaddr_in srv_addr, s
 	char file_name [MAX_RECV_BUF]; /* name of the file to be sent */
 	char print_addr [INET_ADDRSTRLEN]; /* readable IP address */
 
-	for( ; ; ) /* run forever*/ {
-		cli_len = sizeof(cli_addr);
-		printf ("Waiting for a client to connect...\n\n");
-		/* block until some client connects */
-		if ( (conn_fd = accept(listen_fd, (struct sockaddr*) &cli_addr, &cli_len)) < 0 ) {
-			perror("accept error");
-			break; /* exit from the for loop */
-		}
-		/* convert numeric IP to readable format for displaying */
-		inet_ntop(AF_INET, &(cli_addr.sin_addr), print_addr, INET_ADDRSTRLEN);
-		printf("Client connected from %s:%d\n",
-		print_addr, ntohs(cli_addr.sin_port) );
+	// for( ; ; ) /* run forever*/ {
+		// cli_len = sizeof(cli_addr);
+		// printf ("Waiting for a client to connect...\n\n");
+		// /* block until some client connects */
+		// if ( (conn_fd = accept(listen_fd, (struct sockaddr*) &cli_addr, &cli_len)) < 0 ) {
+		// 	perror("accept error");
+		// 	break; /* exit from the for loop */
+		// }
+		// /* convert numeric IP to readable format for displaying */
+		// inet_ntop(AF_INET, &(cli_addr.sin_addr), print_addr, INET_ADDRSTRLEN);
+		// printf("Client connected from %s:%d\n",
+		// print_addr, ntohs(cli_addr.sin_port) );
 		/* fork a new child process */
 		if ( (child_pid = fork()) == 0 ) /* fork returns 0 for child */ {
 			close (listen_fd); /* close child's copy of listen_fd */
@@ -77,6 +77,7 @@ void main_server_send(int listen_fd, int conn_fd, struct sockaddr_in srv_addr, s
 			exit(0); /* exit child process */
 		}
 	close(conn_fd); /* close parent's copy of conn_fd */
-	} /* end for */
-	close(listen_fd); /* close listening socket*/
+	// } /* end for */
+	//close(listen_fd); /* close listening socket*/
 }
+

@@ -89,9 +89,14 @@ int main(int argc, char* argv[]){
 		printf("\nError!Can not connect to sever! Client exit imediately! ");
 		return 0;
 	}
-		
+
+
+	
 	//Step 4: Communicate with server			
     int choice;
+	// printf("Enter choice :\n");
+	// scanf("%d", &choice);
+	choice = send_msg(client_sock, "1", -1);
     while(1) {
         printf("Enter 1 if you want to upload single file\nEnter 2 if you want to disconnect with server\n\n");
         printf("Now, what is your choice? 1 or 2. Please let me know... \n");
