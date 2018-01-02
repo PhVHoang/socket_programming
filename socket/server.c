@@ -140,15 +140,16 @@ int main(int argc, const char* argv[]) {
 		return 0;
 	}
     
-    //signal (SIGCHLD, sig_chld);
+    signal (SIGCHLD, sig_chld);
     while (1) {
         sin_size = sizeof(struct sockaddr_in);
 		if ((conn_sock = accept(listen_sock,( struct sockaddr *)&client_addr, &sin_size)) == -1) 
 			perror("\nError: ");
   		
 		printf("You got a connection from %s\n", inet_ntoa(client_addr.sin_addr) ); /* prints client's IP */
-		
-         while (1) {
+		child_pid = fork();
+		if (child_pid == 0) {
+			 while (1) {
                     if((data = recv_msg(conn_sock, &errnum, &msg_len)) ){ // no khong nhan dc cai nay
 						printf("data = %s\n", data);
 						if (data[0]=='1') {
@@ -196,6 +197,9 @@ int main(int argc, const char* argv[]) {
 				//Doan nay anh nghi no loi o dau chua :v, em chi nghi dk den doan nay thoi
 
             }
+			exit(0);
+		}
+        
 			printf("out\n");
         close(conn_sock);
     }
