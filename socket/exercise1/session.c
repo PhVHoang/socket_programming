@@ -82,7 +82,8 @@ enum ResigterStatus resigterStatus (struct sockaddr_in *cliaddr,char *id, char *
     User *us = findByUserId(id);
    if(us == NULL ) {
     addUser(id,pass);
-   return RE_SUCCESS;} else if return RE_EXIST_USER;
+   return RE_SUCCESS;
+	} else  return RE_EXIST_USER;
 }
 
 enum SessionStatus sessionStatus (struct sockaddr_in *cliaddr) {

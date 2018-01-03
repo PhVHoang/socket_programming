@@ -29,16 +29,21 @@ Output *processCmd (struct sockaddr_in *cliaddr, char *command_str) {
 	switch (cmd->code) {
     case USER:
         return processUSER(cliaddr, cmd->id);
+		break;
     case PASS:
         return processPASS(cliaddr, cmd->pass);
+		break;
     case LOUT:
         return processLOUT(cliaddr, cmd->id, cmd->pass);
+		break;
     case RESG:
     
         return processRESIGTER(cliaddr,cmd->id,cmd->pass);
+		break;
 
     default:
         return NULL;
+		break;
     }
 }
 
@@ -68,10 +73,12 @@ Output *processLOUT (struct sockaddr_in *cliaddr, char *id, char *pass) {
     default:
         strcpy(op->code, LOUT_DECLINE);
         strcpy(op->str, "Add user fail! Something is wrong.");
+		break;
     }
 
     return op;
 }
+
 Output *processRESIGTER (struct sockaddr_in *cliaddr, char *id, char *pass)
 {
     Output *op = (Output *) malloc(sizeof(Output));
@@ -79,7 +86,7 @@ Output *processRESIGTER (struct sockaddr_in *cliaddr, char *id, char *pass)
     switch (resgigter_status) {
         case RE_SUCCESS:
         strcpy(op->code,RESIGTER_ACCEPT);
-        strcpy(op->str, " Resgiter success, login to use ");
+        strcpy(op->str, " Resgiter successed, login to use ");
         case RE_EXIST_USER:
         strcpy(op->code,RESIGTER_DECLINE);
         strcpy(op->str, " User is exist, can't resigter");
