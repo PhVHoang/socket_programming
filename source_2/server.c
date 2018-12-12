@@ -92,7 +92,7 @@ int main(int argc, char *argv[]){
 	}
       }
       if( counts == 0){
-	printf("No any client online!\n");
+	printf("No client online!\n");
       }
       printf("\n\n\n\nPress enter key!");
       getchar();

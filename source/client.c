@@ -165,6 +165,11 @@ void validArguments (int argc, char *argv[], char *serv_ip, int *serv_port) {
 int main(int argc, const char* argv[]) {
 
     /*Initialize*/
+    char dest[BUFF_SIZE];
+    int inner_loop = 0;
+    char username[BUFF_SIZE];
+    memset(username, '\0', sizeof(username));
+
     if (argc < 3) {
         printf("Invalid Arugment !\n");
         return 0;
@@ -202,12 +207,24 @@ int main(int argc, const char* argv[]) {
         __fpurge(stdin);
         switch(login_option) {
             case 1:
+                memset(dest, '\0', sizeof(dest));
                 printf("\nOK. Please enter this bellow form to complete your register: \n");
                 printf("*******   RESG your_new_username your_password ***********");
                 __fpurge(stdin);
-                printf("\nEnter a command: ");
+               // printf("\nEnter a command: ");
                 bzero(buff, BUFF_SIZE);
-                fgets(buff, BUFF_SIZE, stdin);
+                strcpy(buff, "RESG ");
+                printf("\nUsername : ");
+                __fpurge(stdin);
+                fgets(dest, BUFF_SIZE, stdin);
+                dest[strlen(dest)-1] = '\0';
+                strcat(buff, dest);
+                printf("\nPassword : ");
+                __fpurge(stdin);
+                fgets(dest, BUFF_SIZE, stdin);
+                strcat(buff, dest);
+                printf("buff = %s", buff);
+
                 buff[strlen(buff) - 1] = '\0';
 
                 // Check exit
@@ -234,12 +251,28 @@ int main(int argc, const char* argv[]) {
                 printf("------------------------------------------------------------------------------\n");
                 break;
             case 2:
+                memset(dest, '\0', sizeof(dest));
+
                 printf("OK. Please enter this bellow form to complete your login: \n");
                 printf("*******   LGIN your_new_username your_password  ***********");
                 __fpurge(stdin);
-                printf("\nEnter a command: ");
+                //printf("\nEnter a command: ");
                 bzero(buff, BUFF_SIZE);
-                fgets(buff, BUFF_SIZE, stdin);
+                strcpy(buff, "LGIN ");
+                printf("\nUsername : ");
+                __fpurge(stdin);
+                fgets(dest, BUFF_SIZE, stdin);
+                dest[strlen(dest)-1] = '\0';
+                strcpy(username, dest);
+                strcat(buff, dest);
+                strcat(buff, " ");
+                printf("\nPassword : ");
+                __fpurge(stdin);
+                fgets(dest, BUFF_SIZE, stdin);
+
+                strcat(buff, dest);
+                printf("buff = %s", buff);
+                //fgets(buff, BUFF_SIZE, stdin);
                 buff[strlen(buff) - 1] = '\0';
 
                 if (wannaExit(buff)) return;
@@ -271,6 +304,7 @@ int main(int argc, const char* argv[]) {
                         switch(choice) {
                             /*Upload option*/
                             case 1:
+                                inner_loop = 0;
                                 while(1){
                                     printf("\nEnter 1 if you want to upload single file\n");
                                     printf("Enter 2 if you want to choose a difference option\n");
@@ -356,6 +390,7 @@ int main(int argc, const char* argv[]) {
                             
                             /*Download option*/
                             case 2:
+                                inner_loop = 0;
                                 download_filename = malloc(sizeof(char)*BUFF_SIZE);
                                 new_download_filename = malloc(sizeof(char)*BUFF_SIZE);
                                 printf("Enter filename you want to download : ");
@@ -369,39 +404,49 @@ int main(int argc, const char* argv[]) {
                                 recv_file(conn_sock,extended_filename, new_download_filename);
                                 break;
                             case 3:
-                                printf("OK. Please enter this bellow form to complete your logout: \n");
-                                printf("*******   LOUT  ***********");
+                                memset(dest, '\0', sizeof(dest));
+                                printf("You wanna logout (y/n): \n");
+                                //printf("*******   LOUT  ***********");
                                 __fpurge(stdin);
                                 printf("\nEnter a command: ");
                                 bzero(buff, BUFF_SIZE);
-                                fgets(buff, BUFF_SIZE, stdin);
-                                buff[strlen(buff) - 1] = '\0';
+                                fgets(dest, BUFF_SIZE, stdin);
+                                dest[strlen(dest)-1] = '\0';
+                                //fgets(buff, BUFF_SIZE, stdin);
+                                if (strcmp(dest, "y") == 0) {
+                                    strcpy(buff, "LOUT");
+                                    if (wannaExit(buff)) return;
+                                    cmdLOUT(buff);
+                                    msg_len = strlen(buff) + 1;
 
-                                // Check exit
-                                if (wannaExit(buff)) return;
-                                cmdLOUT(buff);
-                                msg_len = strlen(buff) + 1;
+                                    if (send_msg(conn_sock, buff, msg_len) == -1) {
+                                        printf("Connection closed!\n");
+                                        break;
+                                    }
 
-                                if (send_msg(conn_sock, buff, msg_len) == -1) {
-                                    printf("Connection closed!\n");
+                                    //receive echo reply
+                                    bytes_received = recv(conn_sock, buff, BUFF_SIZE-1, 0);
+                                    if(bytes_received <= 0){
+                                        printf("\nError!Cannot receive data from sever!\n");
+                                        break;
+                                    }
+
+                                    buff[bytes_received] = '\0';
+                                    printf("\nReply from server: %s\n", buff);
+                                    // strcpy(dest, buff[0]);
+                                    // strcat(dest, buff[1]);
+                                    // if (strcmp(dest, "20") == 0) inner_loop = 1;
+                                    // else inner_loop = 0;
                                     break;
+                                    
                                 }
-
-                                //receive echo reply
-                                bytes_received = recv(conn_sock, buff, BUFF_SIZE-1, 0);
-                                if(bytes_received <= 0){
-                                    printf("\nError!Cannot receive data from sever!\n");
-                                    break;
-                                }
-
-                                buff[bytes_received] = '\0';
-                                printf("\nReply from server: %s\n", buff);
+                                else 
                                 break;
                             default:
                                 printf("Wrong choice. Please only type 1, 2 or 3\n");
                                 break;
                         }
-                    } while (choice != 3);
+                    } while (inner_loop == 0);
                 }
                 break;
             default:
