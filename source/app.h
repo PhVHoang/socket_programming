@@ -48,6 +48,7 @@ Output *processLGIN (struct sockaddr_in *cliaddr , char *id ,char *pass);
 Output *processRESG (struct sockaddr_in *cliaddr,char *id, char *pass);
 struct Command_ *command (char *input_str);
 int create_folder(char* folder_name);
+void delete_file(char* filename);
 char* get_all_file_from_dir(char* dir_name);
 
 

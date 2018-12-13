@@ -48,6 +48,10 @@ int recv_file(int sock, char* file_name, char* newfilename) {
 	return rcvd_file_size;
 }
 
+int delete_file(int conn_sock, char* wanna_delete_filename) {
+    return 0;
+}
+
 char *recv_msg(int conn_sock){
 	int ret, nLeft, msg_len, index = 0;
 	char recv_data[WINDOW_SIZE], *data;
@@ -217,7 +221,7 @@ int main(int argc, const char* argv[]) {
                 printf("\nUsername : ");
                 __fpurge(stdin);
                 fgets(dest, BUFF_SIZE, stdin);
-                dest[strlen(dest)-1] = '\0';
+                // dest[strlen(dest)-1] = '\0';
                 strcat(buff, dest);
                 printf("\nPassword : ");
                 __fpurge(stdin);
@@ -297,8 +301,9 @@ int main(int argc, const char* argv[]) {
                     do {
                         printf("1. Upload your file into cloud server\n");
                         printf("2. Download file from cloud server\n");
-                        printf("3. LOGOUT\n");
-                        printf("Please take your choice by typing 1 or 2 or 3 : ");
+                        printf("3. Delete a file\n");
+                        printf("4. LOGOUT\n");
+                        printf("Please take your choice by typing 1 or 2 or 3 or 4 : ");
                         scanf("%d", &choice);
                         __fpurge(stdin);
                         switch(choice) {
@@ -404,13 +409,39 @@ int main(int argc, const char* argv[]) {
                                 recv_file(conn_sock,extended_filename, new_download_filename);
                                 break;
                             case 3:
+                                inner_loop = 0;
+                                wanna_delete_filename = malloc(sizeof(char)*BUFF_SIZE);
+                                printf("Enter filename you want to delete : ");
+                                scanf("%s", wanna_delete_filename);
+                                extended_filename = (char*) malloc(sizeof(char)*BUFF_SIZE);
+                                bzero(extended_filename,BUFF_SIZE);
+                                strcat(extended_filename, "3");
+                                strcat(extended_filename,wanna_delete_filename);
+                                // recv_file(conn_sock,extended_filename, new_download_filename);
+                                // TODO
+                                if(send_msg(conn_sock, extended_filename, strlen(extended_filename)) == -1){
+                                    printf("Hard!\n");
+                                    continue;
+                                }
+                                data = recv_msg(conn_sock);
+                                printf("error number :%s\n", data);
+                                errnum = atoi(data);
+                                if (errnum == 1) {
+                                    printf("Error : This file doesn not exist on server\n");
+                                    break;
+                                } else if (errnum == 0) {
+                                    printf("Deleted successfully\n. This file is no longer exits on server.\n");
+                                    break;
+                                }
+                                break;
+                            case 4:
                                 memset(dest, '\0', sizeof(dest));
                                 printf("You wanna logout (y/n): \n");
+                                fgets(dest, BUFF_SIZE, stdin);
+
                                 //printf("*******   LOUT  ***********");
                                 __fpurge(stdin);
-                                printf("\nEnter a command: ");
                                 bzero(buff, BUFF_SIZE);
-                                fgets(dest, BUFF_SIZE, stdin);
                                 dest[strlen(dest)-1] = '\0';
                                 //fgets(buff, BUFF_SIZE, stdin);
                                 if (strcmp(dest, "y") == 0) {

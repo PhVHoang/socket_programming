@@ -48,6 +48,23 @@ int send_file(int sock, char *file_name) {
 	return sent_count;
 }
 
+void delete_file_on_server(int sock, char* filename) {
+	int f;
+	char * errmsg_notfound = "File not found\n";
+	ssize_t sent_bytes;
+
+	if ((f=open(filename, O_RDONLY)) < 0) {
+		perror(file_name);
+		if( (sent_bytes = send(sock, errmsg_notfound , strlen(errmsg_notfound), 0)) < 0 ) {
+			perror("send error");
+			return -1;
+		}
+	}
+	else {
+		printf("This file is on the server\n");
+		delete_file(file_name);
+	}
+}
 char *recv_msg(int conn_sock, int *errnum, int *msg_len){
 	int ret, nLeft, index = 0;
 	char recv_data[BUFF_SIZE], *data;
@@ -239,6 +256,17 @@ int main(int argc, const char* argv[]) {
 							send_file(conn_sock, data);
 							send(conn_sock, "", 0, 0);
 							
+						}
+						else if (data[0] == '3') {
+							remove_first_char(data);
+							saveusername = (char*)malloc(sizeof(char)*1000);
+							bzero(saveusername, 1000);
+							strcat(saveusername, username);
+							strcat(saveusername, "/");
+							data = strcat(saveusername, data);
+							printf("data = %s\n", data);
+							delete_file_on_server(conn_sock, data);
+							send(conn_sock, "", 0, 0);
 						}
 						else {
 							// recv_data[msg_len] = '\0';

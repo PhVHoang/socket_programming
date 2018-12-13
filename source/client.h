@@ -8,7 +8,7 @@
 int conn_sock;
 int msg_len, bytes_sent, bytes_received;
 char buff[BUFF_SIZE], filelink[BUFF_SIZE], filename[BUFF_SIZE], *data;
-char *download_filename, *new_download_filename;
+char *download_filename, *new_download_filename, *wanna_delete_filename;
 struct sockaddr_in server_addr; /* server's address information */
 int serv_port;
 char serv_ip_child[16];
@@ -25,6 +25,7 @@ char output[BUFF_SIZE];
 int bytes_output;
 
 int recv_file(int ,char*, char*);
+int delete_file(int, char*);
 char *recv_msg(int conn_sock);
 int send_msg(int conn_sock, char *message, int msg_len);
 int send_eof_msg(int conn_sock);

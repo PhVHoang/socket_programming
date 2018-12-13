@@ -21,6 +21,10 @@ int create_folder(char* folder_name) {
 	return mkdir(folder_name, 0755);
 }
 
+void delete_file(char* filename) {
+    remove(filename);
+}
+
 char* get_all_file_from_dir(char* dir_name) {
     char* result = (char*)malloc(sizeof(char)*100000);
     DIR  *d;
