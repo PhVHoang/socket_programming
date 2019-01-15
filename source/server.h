@@ -5,6 +5,9 @@
 #include "session.h"
 #include "app.h"
 
+#include<dirent.h>
+#include<errno.h>
+
 int serv_port;
 char serv_ip_child[16];
 int no_user = 0;
@@ -33,5 +36,6 @@ char *extract_username(const char *const string, const char *const left, const c
 char *username, *saveusername;
 char space[2] = " ";
 void remove_first_char(char *s);
+void create_sub_folder(int sock, char* folder_name);
 
 #endif

@@ -55,7 +55,7 @@ void delete_file_on_server(int sock, char* filename) {
 	ssize_t sent_bytes;
 
 	if ((f=open(filename, O_RDONLY)) < 0) {
-		perror(file_name);
+		perror(filename);
 		err_signal = "1";
 		send_msg(sock, err_signal);
 		// if( (sent_bytes = send(sock, errmsg_notfound , strlen(errmsg_notfound), 0)) < 0 ) {
@@ -74,6 +74,32 @@ void delete_file_on_server(int sock, char* filename) {
 		printf("This file was completely deleted\n");
 	}
 }
+
+void create_sub_folder(int sock, char* folder_name) {
+	// TODO
+	char* err_signal;
+	DIR *dir = opendir(folder_name);
+	if (dir) {
+		err_signal = "1";
+		send_msg(sock, err_signal);
+		printf("Existed folder\n");
+		closedir(dir);
+	}
+	else if (ENOENT == errno) {
+    /* Directory does not exist. */
+		err_signal = "0";
+		create_folder(folder_name);
+		send_msg(sock, err_signal);
+		printf("A new folder was created successfuly\n");
+	}
+	else {
+    /* opendir() failed for some other reason. */
+		err_signal = "2";
+		send_msg(sock, err_signal);
+		printf("Something was wrong\n");
+	}
+}
+
 char *recv_msg(int conn_sock, int *errnum, int *msg_len){
 	int ret, nLeft, index = 0;
 	char recv_data[BUFF_SIZE], *data;
@@ -276,6 +302,26 @@ int main(int argc, const char* argv[]) {
 							data = strcat(saveusername, data);
 							printf("data = %s\n", data);
 							delete_file_on_server(conn_sock, data);
+							send(conn_sock, "", 0, 0);
+						}
+						else if (data[0] == '4') {
+							remove_first_char(data);
+							saveusername = (char*)malloc(sizeof(char)*1000);
+							bzero(saveusername, 1000);
+							strcat(saveusername, username);
+							strcat(saveusername, "/");
+							data = strcat(saveusername, data);
+							printf("data = %s\n", data);
+							create_sub_folder(conn_sock, data);
+							send(conn_sock, "", 0, 0);
+							// TODO
+						}
+						else if (data[0] == '5') {
+							// TODO
+							remove_first_char(data);
+							char* all_the_things_from_data = (char*)malloc(sizeof(char)*10000);
+							all_the_things_from_data = get_all_file_from_dir(data);
+							send_msg(conn_sock, all_the_things_from_data);
 							send(conn_sock, "", 0, 0);
 						}
 						else {

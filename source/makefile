@@ -3,7 +3,7 @@ CFLAGS=-w -std=c99
 
 all: client server
 
-client: client.c common.c 
+client: client.c common.c
 	$(CC) -g -o $@ $^ $(CFLAGS)
 
 server: server.c common.c app.c user.c session.c

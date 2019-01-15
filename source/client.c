@@ -301,7 +301,8 @@ int main(int argc, const char* argv[]) {
                         printf("2. Download file from cloud server\n");
                         printf("3. Delete a file\n");
                         printf("4. Create a new sub-folder\n");
-                        printf("5. LOGOUT\n");
+                        printf("5. Show other users\n");
+                        printf("6. LOGOUT\n");
                         printf("Please take your choice by typing 1 or 2 or 3 or 4 : ");
                         scanf("%d", &choice);
                         __fpurge(stdin);
@@ -434,9 +435,72 @@ int main(int argc, const char* argv[]) {
                                 }
                                 break;
                             case 4:
-                                // TODO
+                                folder_name = malloc(sizeof(char)*BUFF_SIZE);
+                                printf("Enter a new folder name: ");
+                                scanf("%s", folder_name);
+                                extended_filename = (char*) malloc(sizeof(char)*BUFF_SIZE);
+                                bzero(extended_filename,BUFF_SIZE);
+                                strcat(extended_filename, "4");
+                                strcat(extended_filename,folder_name);
+                                if(send_msg(conn_sock, extended_filename, strlen(extended_filename)) == -1){
+                                    printf("Hard!\n");
+                                    continue;
+                                }
+                                data = recv_msg(conn_sock);
+                                printf("error number :%s\n", data);
+                                errnum = atoi(data);
+                                if (errnum == 1) {
+                                    printf("Error : Folder_name exists on server\n");
+                                    break;
+                                } else if (errnum == 0) {
+                                    printf("A new folder was created successfuly\n");
+                                    break;
+                                } else if (errnum == 2) {
+                                    printf("Something was wrong\n");
+                                    break;
+                                }
                                 break;
                             case 5:
+                                // TODO
+                                
+                                printf("List of all user_names on server\n");
+                                char* account_file_name = "account.txt";
+                                FILE *f = fopen(account_file_name, "r");
+                                char* user_name;
+                                char* user_password;
+                                int i = 0;
+                                
+                                while(!(feof(f))) {
+                                    user_name = malloc(sizeof(char)*30);
+                                    user_password = malloc(sizeof(char)*30);
+		                            fscanf(f, "%s %s",user_name, user_password);
+                                    printf("%d. %s\n", i+1, user_name);
+		                            if (user_name[0] == '\0' || user_password[0] == '\0') break;
+                                    i += 1;
+                                }
+                                fclose(f);
+                                
+                                other_user_name = malloc(sizeof(char)*BUFF_SIZE);
+                                printf("Enter an username that you want to see: ");
+                                scanf("%s", other_user_name);
+                                
+                                extended_filename = (char*) malloc(sizeof(char)*BUFF_SIZE);
+                                
+                                bzero(extended_filename,BUFF_SIZE);
+                                strcat(extended_filename, "5");
+                                strcat(extended_filename,other_user_name);
+                                
+                                if(send_msg(conn_sock, extended_filename, strlen(extended_filename)) == -1){
+                                    printf("Hard!\n");
+                                    continue;
+                                }
+
+                                data = recv_msg(conn_sock);
+                                printf("----------------------------\n");
+                                printf("All the files of %s\n %s\n", other_user_name, data);
+                                printf("-----------------------------\n");
+                                break;
+                            case 6:
                                 memset(dest, '\0', sizeof(dest));
                                 printf("You wanna logout (y/n): \n");
                                 fgets(dest, BUFF_SIZE, stdin);

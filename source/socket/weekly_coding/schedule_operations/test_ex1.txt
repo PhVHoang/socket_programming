@@ -1,4 +1,0 @@
-IT3080	Computer Network
-IT4560	Computer Literacy
-IT4590	Database
-IT4935	Database Lab
