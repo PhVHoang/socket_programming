@@ -97,7 +97,7 @@ Output *processLGIN(struct sockaddr_in *cliaddr, char *id, char *pass)
 		break;
 		default:
 		strcpy(op->code, LOGIN_DECLINE);
-		strcpy(op->str, " Sorry, some thing is wrong");
+		strcpy(op->str, " Sorry, some thing was wrong");
 		break;
 
 	}

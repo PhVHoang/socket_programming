@@ -215,35 +215,33 @@ int main(int argc, const char* argv[]) {
                 printf("\nOK. Please enter this bellow form to complete your register: \n");
                 printf("*******   RESG your_new_username your_password ***********");
                 __fpurge(stdin);
-               // printf("\nEnter a command: ");
+                //printf("\nEnter a command: ");
                 bzero(buff, BUFF_SIZE);
                 strcpy(buff, "RESG ");
                 printf("\nUsername : ");
                 __fpurge(stdin);
                 fgets(dest, BUFF_SIZE, stdin);
-                // dest[strlen(dest)-1] = '\0';
+                dest[strlen(dest)-1] = '\0';
+                strcpy(username, dest);
                 strcat(buff, dest);
+                strcat(buff, " ");
                 printf("\nPassword : ");
                 __fpurge(stdin);
                 fgets(dest, BUFF_SIZE, stdin);
+
                 strcat(buff, dest);
                 printf("buff = %s", buff);
-
+                //fgets(buff, BUFF_SIZE, stdin);
                 buff[strlen(buff) - 1] = '\0';
 
-                // Check exit
                 if (wannaExit(buff)) return;
-
-                // Xu ly neu laf command LOUT
-                cmdLOUT(buff);
                 msg_len = strlen(buff) + 1;
 
                 if( send_msg(conn_sock, buff, msg_len) == -1) {
                     printf("Connection closed!\n");
                     break;
                 }
-
-                //receive echo reply
+                
                 bytes_received = recv(conn_sock, buff, BUFF_SIZE-1, 0);
                 if(bytes_received <= 0){
                     printf("\nError!Cannot receive data from sever!\n");

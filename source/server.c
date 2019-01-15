@@ -191,6 +191,7 @@ int main(int argc, const char* argv[]) {
     
     signal (SIGCHLD, sig_chld);
     while (1) {
+		readUser(USER_FILE);
         sin_size = sizeof(struct sockaddr_in);
 		client_addr = (struct sockaddr_in *) malloc(sizeof(struct sockaddr_in));
 		if ((conn_sock = accept(listen_sock,( struct sockaddr *)client_addr, &sin_size)) == -1) 
