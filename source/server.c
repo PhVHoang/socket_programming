@@ -50,19 +50,28 @@ int send_file(int sock, char *file_name) {
 
 void delete_file_on_server(int sock, char* filename) {
 	int f;
+	char * err_signal;
 	char * errmsg_notfound = "File not found\n";
 	ssize_t sent_bytes;
 
 	if ((f=open(filename, O_RDONLY)) < 0) {
 		perror(file_name);
-		if( (sent_bytes = send(sock, errmsg_notfound , strlen(errmsg_notfound), 0)) < 0 ) {
-			perror("send error");
-			return -1;
-		}
+		err_signal = "1";
+		send_msg(sock, err_signal);
+		// if( (sent_bytes = send(sock, errmsg_notfound , strlen(errmsg_notfound), 0)) < 0 ) {
+		// 	perror("send error");
+		// 	err_signal = "1";
+		// 	send_msg(sock, err_signal);
+		// 	return -1;
+		// }
 	}
 	else {
 		printf("This file is on the server\n");
-		delete_file(file_name);
+		// delete_file(file_name);
+		remove(filename);
+		err_signal = "0";
+		send_msg(sock, err_signal);
+		printf("This file was completely deleted\n");
 	}
 }
 char *recv_msg(int conn_sock, int *errnum, int *msg_len){

@@ -300,7 +300,8 @@ int main(int argc, const char* argv[]) {
                         printf("1. Upload your file into cloud server\n");
                         printf("2. Download file from cloud server\n");
                         printf("3. Delete a file\n");
-                        printf("4. LOGOUT\n");
+                        printf("4. Create a new sub-folder\n");
+                        printf("5. LOGOUT\n");
                         printf("Please take your choice by typing 1 or 2 or 3 or 4 : ");
                         scanf("%d", &choice);
                         __fpurge(stdin);
@@ -433,6 +434,9 @@ int main(int argc, const char* argv[]) {
                                 }
                                 break;
                             case 4:
+                                // TODO
+                                break;
+                            case 5:
                                 memset(dest, '\0', sizeof(dest));
                                 printf("You wanna logout (y/n): \n");
                                 fgets(dest, BUFF_SIZE, stdin);
