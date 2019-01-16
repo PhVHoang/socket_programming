@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include<errno.h>
+ #include <sys/types.h>
+       #include <sys/stat.h>
+       #include <fcntl.h>
 
 void delete_file(char* filename) {
     remove(filename);
@@ -70,13 +73,49 @@ int copyfile1(char* infilename, char* outfileDir) {
     outfile = fopen(outfilename, "w");
 }
 
-int main(int argc, char const *argv[])
-{
-    char* filename = "socket/11.pdf";
-    char* subfolder_name = "highland/highland1";
-    // delete_file(filename);
-    // create_folder(subfolder_name);
-    copyfile1("./abc.xyz", "phantrang/");
+
+int main(int argn, char * argv[]) {
+
+    // int src_fd, dst_fd, n, err;
+    // unsigned char buffer[4096];
+    // char * src_path, dst_path;
+
+    // // Assume that the program takes two arguments the source path followed
+    // // by the destination path.
+
+    // if (argn != 3) {
+    //     printf("Wrong argument count.\n");
+    //     exit(1);
+    // }
+
+    // src_path = argv[1];
+    // dst_path = argv[2];
+
+    // src_fd = open(src_path, O_RDONLY);
+    // dst_fd = open(dst_path, O_CREAT | O_WRONLY);
+
+    // while (1) {
+    //     err = read(src_fd, buffer, 4096);
+    //     if (err == -1) {
+    //         printf("Error reading file.\n");
+    //         exit(1);
+    //     }
+    //     n = err;
+
+    //     if (n == 0) break;
+
+    //     err = write(dst_fd, buffer, n);
+    //     if (err == -1) {
+    //         printf("Error writing to file.\n");
+    //         exit(1);
+    //     }
+    // }
+
+    // close(src_fd);
+    // close(dst_fd);
+    system("cp ./1.pdf ./linh/mycopiedfile.txt");
+
     return 0;
 }
+
 

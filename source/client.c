@@ -73,18 +73,25 @@ void create_sub_client_folder(char* sub_folder_name) {
 }
 
 int copyfile(char* infilename, char* outfileDir) {
-    FILE* infile; //File handles for source and destination.
-    FILE* outfile;
-    char outfilename[1000];
+    // FILE* infile; //File handles for source and destination.
+    // FILE* outfile;
+    // char outfilename[1000];
 
-    infile = fopen(infilename, "r"); // Open the input and output files.
-    if (infile == NULL) {
-      printf("%s not found\n", infilename);
-      return 1;
-    }
-    sprintf(outfilename, "%s/%s", outfileDir, basename(infilename));
+    // infile = fopen(infilename, "r"); // Open the input and output files.
+    // if (infile == NULL) {
+    //   printf("%s not found\n", infilename);
+    //   return 1;
+    // }
+    // sprintf(outfilename, "%s/%s", outfileDir, basename(infilename));
 
-    outfile = fopen(outfilename, "w");
+    // outfile = fopen(outfilename, "w");
+    char* copy_command  = malloc(sizeof(char)*BUFF_SIZE);
+    strcat(copy_command, "cp ");
+    strcat(copy_command, " ");
+    strcat(copy_command, infilename);
+    strcat(copy_command, " ");
+    strcat(copy_command, outfileDir);
+    system(copy_command);
 }
 
 void delete_file_on_client_side(char* filename) {
