@@ -536,10 +536,8 @@ int main(int argc, const char* argv[]) {
                             case 5:
                                 system("clear");
                                 printf("List of all user_names on server\n");
-                                char* account_file_name = "account.txt";
-                                FILE *f = fopen(account_file_name, "r");
-                                char* user_name;
-                                char* user_password;
+                                f = fopen(account_file_name, "r");
+                                
                                 int i = 0;
                                 
                                 while(!(feof(f))) {
@@ -580,8 +578,65 @@ int main(int argc, const char* argv[]) {
                             
                             case 6:
                                 system("clear");
-                                // TODO
+                                printf("List of all user_names on server\n");
                                 
+                                f = fopen(account_file_name, "r");
+                            
+                                int j = 0;
+                                    
+                                while(!(feof(f))) {
+                                    user_name = malloc(sizeof(char)*30);
+                                    user_password = malloc(sizeof(char)*30);
+                                    fscanf(f, "%s %s",user_name, user_password);
+                                    printf("---------------------------\n");
+                                    printf("|%d. %s\n", j+1, user_name);
+                                    printf("---------------------------\n");
+                                    if (user_name[0] == '\0' || user_password[0] == '\0') break;
+                                    j += 1;
+                                }
+                                fclose(f);
+                
+                                    other_user_name = malloc(sizeof(char)*BUFF_SIZE);
+                                    printf("Enter an username that you want to see: ");
+                                    scanf("%s", other_user_name);
+                                    system("clear");
+
+                                    
+                                    extended_filename = (char*) malloc(sizeof(char)*BUFF_SIZE);
+                                    
+                                    bzero(extended_filename,BUFF_SIZE);
+                                    strcat(extended_filename, "5");
+                                    strcat(extended_filename,other_user_name);
+                                    
+                                    if(send_msg(conn_sock, extended_filename, strlen(extended_filename)) == -1){
+                                        printf("Hard!\n");
+                                        continue;
+                                    }
+                                    free(extended_filename);
+
+                                    data = recv_msg(conn_sock);
+                                    printf("----------------------------\n");
+                                    printf("All the files of %s\n", other_user_name);
+                                    printf("----------------------------\n");
+                                    printf("----------------------------\n");
+                                    printf("%s\n", data);
+                                    printf("----------------------------\n");
+
+                                    download_filename = malloc(sizeof(char)*BUFF_SIZE);
+                                    new_download_filename = malloc(sizeof(char)*BUFF_SIZE);
+                                    printf("Enter filename you want to download : ");
+                                    scanf("%s", download_filename);
+                                    printf("Enter new filename you want to save : ");
+                                    scanf("%s", new_download_filename);
+                                    extended_filename = (char*) malloc(sizeof(char)*BUFF_SIZE);
+                                    bzero(extended_filename,BUFF_SIZE);
+                                    strcat(extended_filename, "6");
+                                    strcat(extended_filename, other_user_name);
+                                    strcat(extended_filename, "/");
+                                    strcat(extended_filename,download_filename);
+
+                                    recv_file(conn_sock,extended_filename, new_download_filename);
+                                    
                                 break;
                             
                             case 7:

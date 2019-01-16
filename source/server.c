@@ -322,6 +322,10 @@ int main(int argc, const char* argv[]) {
 
 						else if (data[0] == '6') {
 							// TODO
+							remove_first_char(data);
+							printf("data = %s\n", data);
+							send_file(conn_sock, data);
+							send(conn_sock, "", 0, 0);
 						}
 
 						else if (data[0] == '7') {

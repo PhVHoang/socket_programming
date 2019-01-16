@@ -15,7 +15,15 @@
 int conn_sock;
 int msg_len, bytes_sent, bytes_received;
 char buff[BUFF_SIZE], filelink[BUFF_SIZE], filename[BUFF_SIZE], *data;
-char *download_filename, *new_download_filename, *wanna_delete_filename, *folder_name, *other_user_name;
+char *download_filename, *new_download_filename, *wanna_delete_filename, *folder_name, *other_user_name,
+        *other_user_filename;
+
+char* user_name;
+char* user_password;
+
+char* account_file_name = "account.txt";
+FILE *f;
+
 struct sockaddr_in server_addr; /* server's address information */
 int serv_port;
 char serv_ip_child[16];
