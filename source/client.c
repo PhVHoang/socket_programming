@@ -316,8 +316,9 @@ int main(int argc, const char* argv[]) {
                         printf("        |3. Delete a file                              |\n");
                         printf("        |4. Create a new sub-folder                    |\n");
                         printf("        |5. Show other users                           |\n");
-                        printf("        |6. LOGOUT                                     |\n");
-                        printf("        -----------------------------------------------\n");
+                        printf("        |6. Download files from other users            |\n");
+                        printf("        |7. LOGOUT                                     |\n");
+                        printf("        ------------------------------------------------\n");
                         printf("\n");
                         printf("Please take your choice: ");
                         scanf("%d", &choice);
@@ -392,6 +393,8 @@ int main(int argc, const char* argv[]) {
                                                 }
                                                 if(errnum == -1){
                                                     printf("\nSuccessful Uploading\n");
+                                                    // syn here
+                                                    
                                                 }else{
                                                     printf("\nError: File uploading is interupted\n");
                                                 }
@@ -440,7 +443,7 @@ int main(int argc, const char* argv[]) {
                                     continue;
                                 }
                                 data = recv_msg(conn_sock);
-                                printf("error number :%s\n", data);
+                                // printf("error number :%s\n", data);
                                 errnum = atoi(data);
                                 if (errnum == 1) {
                                     printf("Error : This file doesn not exist on server\n");
@@ -483,7 +486,6 @@ int main(int argc, const char* argv[]) {
                                 }
                                 break;
                             case 5:
-                                // TODO
                                 
                                 printf("List of all user_names on server\n");
                                 char* account_file_name = "account.txt";
@@ -496,7 +498,9 @@ int main(int argc, const char* argv[]) {
                                     user_name = malloc(sizeof(char)*30);
                                     user_password = malloc(sizeof(char)*30);
 		                            fscanf(f, "%s %s",user_name, user_password);
-                                    printf("%d. %s\n", i+1, user_name);
+                                    printf("---------------------------\n");
+                                    printf("|%d. %s\n", i+1, user_name);
+                                    printf("---------------------------\n");
 		                            if (user_name[0] == '\0' || user_password[0] == '\0') break;
                                     i += 1;
                                 }
@@ -519,10 +523,18 @@ int main(int argc, const char* argv[]) {
 
                                 data = recv_msg(conn_sock);
                                 printf("----------------------------\n");
-                                printf("All the files of %s\n  %s\n", other_user_name, data);
+                                printf("All the files of %s\n", other_user_name);
+                                printf("----------------------------\n");
+                                printf("----------------------------\n");
+                                printf("%s\n", data);
                                 printf("----------------------------\n");
                                 break;
+                            
                             case 6:
+                                // TODO
+                                break;
+                            
+                            case 7:
                                 memset(dest, '\0', sizeof(dest));
                                 printf("You wanna logout (y/n): \n");
                                 fgets(dest, BUFF_SIZE, stdin);
