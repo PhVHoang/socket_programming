@@ -319,8 +319,12 @@ int main(int argc, const char* argv[]) {
 							send_msg(conn_sock, all_the_things_from_data);
 							send(conn_sock, "", 0, 0);
 						}
-						
+
 						else if (data[0] == '6') {
+							// TODO
+						}
+
+						else if (data[0] == '7') {
 							// TODO
 						}
 

@@ -256,9 +256,10 @@ int main(int argc, const char* argv[]) {
         __fpurge(stdin);
         switch(login_option) {
             case 1:
+                system("clear");
                 memset(dest, '\0', sizeof(dest));
                 printf("\nOK. Please enter this bellow form to complete your register: \n");
-                printf("*******   RESG your_new_username your_password ***********");
+                printf("                ************* RESG ***************");
                 __fpurge(stdin);
                 bzero(buff, BUFF_SIZE);
                 strcpy(buff, "RESG ");
@@ -295,10 +296,11 @@ int main(int argc, const char* argv[]) {
                 // printf("\nReply from server: %s\n", buff);
                 break;
             case 2:
+                system("clear");
                 memset(dest, '\0', sizeof(dest));
 
                 printf("OK. Please enter this bellow form to complete your login: \n");
-                printf("*******   LGIN your_new_username your_password  ***********");
+                printf("             *******   LGIN   *******");
                 __fpurge(stdin);
                 bzero(buff, BUFF_SIZE);
                 strcpy(buff, "LGIN ");
@@ -336,6 +338,7 @@ int main(int argc, const char* argv[]) {
                 // printf("\nReply from server: %s\n", buff);
                 printf("------------------------------------------------------------------------------\n");
                 if (buff[0] == '1' && buff[1] == '0') {
+                    system("clear");
                     printf("Welcome to our cloud\n\n\nPlease look at this bellow menu and select your choice\n\n");
                     do {
                         printf("\n\n");
@@ -346,7 +349,8 @@ int main(int argc, const char* argv[]) {
                         printf("        |4. Create a new sub-folder                    |\n");
                         printf("        |5. Show other users                           |\n");
                         printf("        |6. Download files from other users            |\n");
-                        printf("        |7. Logout                                     |\n");
+                        printf("        |7. Upload files into sub-folder               |\n");
+                        printf("        |8. Logout                                     |\n");
                         printf("        ------------------------------------------------\n");
                         printf("\n");
                         printf("Please take your choice: ");
@@ -355,6 +359,7 @@ int main(int argc, const char* argv[]) {
                         switch(choice) {
                             /*Upload option*/
                             case 1:
+                                system("clear");
                                 inner_loop = 0;
                                 while(1){
                                     printf("\nEnter 1 if you want to upload single file\n");
@@ -448,6 +453,7 @@ int main(int argc, const char* argv[]) {
                             
                             /*Download option*/
                             case 2:
+                                // system("clear");
                                 inner_loop = 0;
                                 download_filename = malloc(sizeof(char)*BUFF_SIZE);
                                 new_download_filename = malloc(sizeof(char)*BUFF_SIZE);
@@ -462,6 +468,7 @@ int main(int argc, const char* argv[]) {
                                 recv_file(conn_sock,extended_filename, new_download_filename);
                                 break;
                             case 3:
+                                system("clear");
                                 inner_loop = 0;
                                 wanna_delete_filename = malloc(sizeof(char)*BUFF_SIZE);
                                 printf("Enter filename you want to delete : ");
@@ -494,6 +501,7 @@ int main(int argc, const char* argv[]) {
                                 }
                                 break;
                             case 4:
+                                system("clear");
                                 folder_name = malloc(sizeof(char)*BUFF_SIZE);
                                 printf("Enter a new folder name: ");
                                 scanf("%s", folder_name);
@@ -526,7 +534,7 @@ int main(int argc, const char* argv[]) {
                                 }
                                 break;
                             case 5:
-                                
+                                system("clear");
                                 printf("List of all user_names on server\n");
                                 char* account_file_name = "account.txt";
                                 FILE *f = fopen(account_file_name, "r");
@@ -571,10 +579,18 @@ int main(int argc, const char* argv[]) {
                                 break;
                             
                             case 6:
+                                system("clear");
                                 // TODO
+                                
                                 break;
                             
                             case 7:
+                                system("clear");
+                                // TODO
+                                break;
+                            
+                            case 8:
+                                system("clear");
                                 memset(dest, '\0', sizeof(dest));
                                 printf("You wanna logout (y/n): \n");
                                 fgets(dest, BUFF_SIZE, stdin);
