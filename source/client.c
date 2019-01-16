@@ -310,16 +310,16 @@ int main(int argc, const char* argv[]) {
                     printf("Welcome to our cloud\n\n\nPlease look at this bellow menu and select your choice\n\n");
                     do {
                         printf("\n\n");
-                        printf("----------------------------------------------\n");
-                        printf("1. Upload your file into cloud server        |\n");
-                        printf("2. Download file from cloud server           |\n");
-                        printf("3. Delete a file                             |\n");
-                        printf("4. Create a new sub-folder                   |\n");
-                        printf("5. Show other users                          |\n");
-                        printf("6. LOGOUT                                    |\n");
-                        printf("----------------------------------------------\n");
+                        printf("        ------------------------------------------------\n");
+                        printf("        |1. Upload your files into cloud server        |\n");
+                        printf("        |2. Download files from cloud server           |\n");
+                        printf("        |3. Delete a file                              |\n");
+                        printf("        |4. Create a new sub-folder                    |\n");
+                        printf("        |5. Show other users                           |\n");
+                        printf("        |6. LOGOUT                                     |\n");
+                        printf("        -----------------------------------------------\n");
                         printf("\n");
-                        printf("Please take your choice by typing 1 or 2 or 3 or 4 : ");
+                        printf("Please take your choice: ");
                         scanf("%d", &choice);
                         __fpurge(stdin);
                         switch(choice) {
