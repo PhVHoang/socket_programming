@@ -639,10 +639,102 @@ int main(int argc, const char* argv[]) {
                                     
                                 break;
                             
+
+
+
                             case 7:
+                                bytes_transfered = 0;
+                                char* local_filename = malloc(sizeof(char)*BUFF_SIZE);
+                                        // input file link
+                                        folder_name = malloc(sizeof(char)*BUFF_SIZE);
+                                        printf("Enter folder that you want to upload file into: ");
+                                        scanf("%s", folder_name);
+                                        // fflush(stdin);
+                                        printf("Enter filename that you want to upload: ");
+                                        scanf("%s", local_filename);
+                                        printf("local filename = %s", local_filename);
+                                        // memset(buff,'\0', BUFF_SIZE);
+                                        // fgets(buff, BUFF_SIZE, stdin);
+                                        // buff[strlen(buff) - 1] = '\0';
+                                        // if (strlen(buff) == 0) break;
+                                        strcpy(filelink, local_filename);
+                                        printf("file link = %s", filelink);
+                                        if((fp = fopen(filelink, "rb")) == NULL){
+                                            printf("Error: File not found\n");
+                                            continue;
+                                        }else{
+                                            
+                                            strcpy(filename, rindex(filelink, '/') + 1);
+                                            extended_filename = (char*) malloc(sizeof(char)*BUFF_SIZE);
+                                            bzero(extended_filename,BUFF_SIZE);
+                                            strcat(extended_filename, "1");
+                                            strcat(extended_filename, folder_name);
+                                            strcat(extended_filename, "/");
+                                            strcat(extended_filename,filename);
+                                            printf("extended filename: %s", extended_filename);
+                                            if(send_msg(conn_sock, extended_filename, strlen(extended_filename)) == -1){
+                                                printf("Hard!\n");
+                                                continue;
+                                            }
+                                            printf("filename = %s\n", filename);
+                                            fflush(stdin);
+                                            data = recv_msg(conn_sock);
+                                            printf("error number :%s\n", data);
+                                            errnum = atoi(data);
+                                            if(errnum == 1){		// if file is existent on server
+                                                printf("Error: File is existent on server\n");
+                                            }else if(errnum == 0){		// if there is no error
+                                                while(errnum == 0){		// until there is an error, keep reading from file
+                                                    memset(buff,'\0', BUFF_SIZE);
+                                                    if(fread(buff, BUFF_SIZE, 1, fp) == 1){
+                                                        if(send_msg(conn_sock, buff, sizeof(buff)) == -1){
+                                                            break;
+                                                        }
+                                                        printf("Uploaded: %.2lf MB\n", (bytes_transfered += sizeof(buff)) / (1024*1024));
+                                                    }else{
+                                                        if(send_msg(conn_sock, buff, sizeof(buff)) == -1){
+                                                            break;
+                                                        }
+                                                        printf("Uploaded: %.2lf MB\n", (bytes_transfered += sizeof(buff)) / (1024*1024));
+                                                        
+                                                        data = recv_msg(conn_sock);
+                                                        errnum = atoi(data);
+
+                                                        if(send_eof_msg(conn_sock) == -1){
+                                                            break;
+                                                        }
+                                                    }
+                                                    data = recv_msg(conn_sock);
+                                                    errnum = atoi(data);
+                                                }
+                                                if(errnum == -1){
+                                                    
+                                                    // syn here
+                                                    char* saved_username = malloc(sizeof(char)*50);
+                                                    strcpy(saved_username, username);
+                                                    strcat(saved_username, "_client/");
+                                                    strcat(saved_username, folder_name);
+                                                    strcat(saved_username, "/");
+                                                    copyfile(filename, saved_username);
+                                                    printf("\nSuccessful Uploading\n");
+                                                    printf("Syn successfuly");
+
+                                                }else{
+                                                    printf("\nError: File uploading is interupted\n");
+                                                }
+                                            }
+                                        }
+                                        fclose(fp);
+                                    
+                                    
                                 system("clear");
                                 // TODO
                                 break;
+                            
+                            
+                            
+                            
+                            
                             
                             case 8:
                                 system("clear");
