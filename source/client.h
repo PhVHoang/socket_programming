@@ -1,3 +1,5 @@
+#include<dirent.h>
+#include<errno.h>
 #ifndef CLIENT
 #define CLIENT
 #include "common.h"
@@ -31,6 +33,7 @@ char *recv_msg(int conn_sock);
 int send_msg(int conn_sock, char *message, int msg_len);
 int send_eof_msg(int conn_sock);
 void enter_path_file();
+void create_sub_client_folder(char* sub_folder_name);
 
 void cmdLOUT (char *str);
 void validArguments (int argc, char *argv[], char *serv_ip, int *serv_port);

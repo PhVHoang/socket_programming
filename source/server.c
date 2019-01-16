@@ -58,12 +58,6 @@ void delete_file_on_server(int sock, char* filename) {
 		perror(filename);
 		err_signal = "1";
 		send_msg(sock, err_signal);
-		// if( (sent_bytes = send(sock, errmsg_notfound , strlen(errmsg_notfound), 0)) < 0 ) {
-		// 	perror("send error");
-		// 	err_signal = "1";
-		// 	send_msg(sock, err_signal);
-		// 	return -1;
-		// }
 	}
 	else {
 		printf("This file is on the server\n");

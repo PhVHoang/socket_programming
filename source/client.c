@@ -52,6 +52,26 @@ int delete_file(int conn_sock, char* wanna_delete_filename) {
     return 0;
 }
 
+int create_folder(char* folder_name) {
+    return mkdir(folder_name, 0755);
+}
+
+void create_sub_client_folder(char* sub_folder_name) {
+    DIR *dir = opendir(sub_folder_name);
+	if (dir) {
+		printf("Existed folder\n");
+		closedir(dir);
+	}
+	else if (ENOENT == errno) {
+    /* Directory does not exist. */
+		create_folder(sub_folder_name);
+	}
+	else {
+    /* opendir() failed for some other reason. */
+		printf("Something was wrong\n");
+	}
+}
+
 char *recv_msg(int conn_sock){
 	int ret, nLeft, msg_len, index = 0;
 	char recv_data[WINDOW_SIZE], *data;
@@ -110,10 +130,6 @@ void enter_path_file() {
 
 void set_null(char **ptr) {
     *ptr = NULL;
-}
-
-int create_folder(char* folder_name) {
-    return mkdir(folder_name, 0755);
 }
 
 void cmdLOUT (char *str) {
@@ -197,16 +213,16 @@ int main(int argc, const char* argv[]) {
     int login_option, choice, upload_option, download_option;
     while (1) {
         printf("*************************************************************\n");
-        printf("**********************Files manager**************************\n");
-        printf("*******                                          ***********\n");
+        printf("*************************Welcome*****************************\n");
+        printf("*******                                          ************\n");
         printf("*******               1. REGISTER                 ***********\n");
         printf("*******               2. LOGIN                    ***********\n");
         printf("*******                                           ***********\n");
         printf("*************************************************************\n");
         printf("*************************************************************\n\n\n");
         printf("Please choose 1 if you want to create a new account\n");
-        printf("or choose 2 if you already have an account\n");
-        printf("Enter your choice : ");
+        printf("Or choose 2 if you already have an account\n");
+        printf("Enter your choice: ");
         scanf("%d", &login_option);
         __fpurge(stdin);
         switch(login_option) {
@@ -215,7 +231,6 @@ int main(int argc, const char* argv[]) {
                 printf("\nOK. Please enter this bellow form to complete your register: \n");
                 printf("*******   RESG your_new_username your_password ***********");
                 __fpurge(stdin);
-                //printf("\nEnter a command: ");
                 bzero(buff, BUFF_SIZE);
                 strcpy(buff, "RESG ");
                 printf("\nUsername : ");
@@ -231,7 +246,6 @@ int main(int argc, const char* argv[]) {
 
                 strcat(buff, dest);
                 printf("buff = %s", buff);
-                //fgets(buff, BUFF_SIZE, stdin);
                 buff[strlen(buff) - 1] = '\0';
 
                 if (wannaExit(buff)) return;
@@ -250,7 +264,6 @@ int main(int argc, const char* argv[]) {
 
                 buff[bytes_received] = '\0';
                 printf("\nReply from server: %s\n", buff);
-                printf("------------------------------------------------------------------------------\n");
                 break;
             case 2:
                 memset(dest, '\0', sizeof(dest));
@@ -258,7 +271,6 @@ int main(int argc, const char* argv[]) {
                 printf("OK. Please enter this bellow form to complete your login: \n");
                 printf("*******   LGIN your_new_username your_password  ***********");
                 __fpurge(stdin);
-                //printf("\nEnter a command: ");
                 bzero(buff, BUFF_SIZE);
                 strcpy(buff, "LGIN ");
                 printf("\nUsername : ");
@@ -297,12 +309,16 @@ int main(int argc, const char* argv[]) {
                 if (buff[0] == '1' && buff[1] == '0') {
                     printf("Welcome to our cloud\n\n\nPlease look at this bellow menu and select your choice\n\n");
                     do {
-                        printf("1. Upload your file into cloud server\n");
-                        printf("2. Download file from cloud server\n");
-                        printf("3. Delete a file\n");
-                        printf("4. Create a new sub-folder\n");
-                        printf("5. Show other users\n");
-                        printf("6. LOGOUT\n");
+                        printf("\n\n");
+                        printf("----------------------------------------------\n");
+                        printf("1. Upload your file into cloud server        |\n");
+                        printf("2. Download file from cloud server           |\n");
+                        printf("3. Delete a file                             |\n");
+                        printf("4. Create a new sub-folder                   |\n");
+                        printf("5. Show other users                          |\n");
+                        printf("6. LOGOUT                                    |\n");
+                        printf("----------------------------------------------\n");
+                        printf("\n");
                         printf("Please take your choice by typing 1 or 2 or 3 or 4 : ");
                         scanf("%d", &choice);
                         __fpurge(stdin);
@@ -453,6 +469,12 @@ int main(int argc, const char* argv[]) {
                                     printf("Error : Folder_name exists on server\n");
                                     break;
                                 } else if (errnum == 0) {
+                                    char* saved_username = malloc(sizeof(char)*50);
+                                    strcpy(saved_username, username);
+                                    strcat(saved_username, "_client/");
+                                    strcat(saved_username, folder_name);
+                                    // printf("saved_username = %s len = %d\n", saved_username, strlen(saved_username));
+                                    create_sub_client_folder(saved_username);
                                     printf("A new folder was created successfuly\n");
                                     break;
                                 } else if (errnum == 2) {
@@ -497,8 +519,8 @@ int main(int argc, const char* argv[]) {
 
                                 data = recv_msg(conn_sock);
                                 printf("----------------------------\n");
-                                printf("All the files of %s\n %s\n", other_user_name, data);
-                                printf("-----------------------------\n");
+                                printf("All the files of %s\n  %s\n", other_user_name, data);
+                                printf("----------------------------\n");
                                 break;
                             case 6:
                                 memset(dest, '\0', sizeof(dest));
@@ -530,10 +552,7 @@ int main(int argc, const char* argv[]) {
 
                                     buff[bytes_received] = '\0';
                                     printf("\nReply from server: %s\n", buff);
-                                    // strcpy(dest, buff[0]);
-                                    // strcat(dest, buff[1]);
-                                    // if (strcmp(dest, "20") == 0) inner_loop = 1;
-                                    // else inner_loop = 0;
+                                    
                                     break;
                                     
                                 }

@@ -134,6 +134,8 @@ Output *processLOUT (struct sockaddr_in *cliaddr, char *id, char *pass) {
 Output *processRESG (struct sockaddr_in *cliaddr, char *id, char *pass)
 {
     Output *op = (Output *) malloc(sizeof(Output));
+    char* extended = "_client";
+    char* extended_foldername = malloc(sizeof(char)*30);
     enum ResigterStatus resgigter_status = resigter(cliaddr, id, pass);
     switch (resgigter_status)
      {
@@ -141,6 +143,9 @@ Output *processRESG (struct sockaddr_in *cliaddr, char *id, char *pass)
         strcpy(op->code,RESG_ACCEPT);
         strcpy(op->str, " Resgiter successed, you just created a folder for saving your files, login to use ");
         create_folder(id);
+        strcat(extended_foldername, id);
+        strcat(extended_foldername, extended);
+        create_folder(extended_foldername);
         break;
     
         case DUPLICATE_USER:
