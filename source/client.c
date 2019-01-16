@@ -716,8 +716,8 @@ int main(int argc, const char* argv[]) {
                                                     strcat(saved_username, folder_name);
                                                     strcat(saved_username, "/");
                                                     copyfile(filename, saved_username);
-                                                    printf("\nSuccessful Uploading\n");
-                                                    printf("Syn successfuly");
+                                                    // printf("\nSuccessful Uploading\n");
+                                                    printf("Uploaded successfuly");
 
                                                 }else{
                                                     printf("\nError: File uploading is interupted\n");
