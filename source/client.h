@@ -39,6 +39,7 @@ int send_eof_msg(int conn_sock);
 void enter_path_file();
 void create_sub_client_folder(char* sub_folder_name);
 int copyfile(char* infilename, char* outfileDir);
+void delete_file_on_client_side(char* filename);
 
 void cmdLOUT (char *str);
 void validArguments (int argc, char *argv[], char *serv_ip, int *serv_port);

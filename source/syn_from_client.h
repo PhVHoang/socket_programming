@@ -3,7 +3,7 @@
 #include<errno.h>
 #include<libgen.h>
 
-int copyfile1(char* infilename, char* outfileDir) {
+int copyfile(char* infilename, char* outfileDir) {
     FILE* infile; //File handles for source and destination.
     FILE* outfile;
     char outfilename[1000];

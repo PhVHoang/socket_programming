@@ -87,6 +87,18 @@ int copyfile(char* infilename, char* outfileDir) {
     outfile = fopen(outfilename, "w");
 }
 
+void delete_file_on_client_side(char* filename) {
+	int f;
+	char * errmsg_notfound = "File not found\n";
+
+	if ((f=open(filename, O_RDONLY)) < 0) {
+		perror(filename);
+	}
+	else {
+		remove(filename);
+	}
+}
+
 
 
 char *recv_msg(int conn_sock){
@@ -280,7 +292,7 @@ int main(int argc, const char* argv[]) {
                 }
 
                 buff[bytes_received] = '\0';
-                printf("\nReply from server: %s\n", buff);
+                // printf("\nReply from server: %s\n", buff);
                 break;
             case 2:
                 memset(dest, '\0', sizeof(dest));
@@ -321,7 +333,7 @@ int main(int argc, const char* argv[]) {
                 }
 
                 buff[bytes_received] = '\0';
-                printf("\nReply from server: %s\n", buff);
+                // printf("\nReply from server: %s\n", buff);
                 printf("------------------------------------------------------------------------------\n");
                 if (buff[0] == '1' && buff[1] == '0') {
                     printf("Welcome to our cloud\n\n\nPlease look at this bellow menu and select your choice\n\n");
@@ -472,6 +484,12 @@ int main(int argc, const char* argv[]) {
                                     break;
                                 } else if (errnum == 0) {
                                     printf("Deleted successfully\n. This file is no longer exits on server.\n");
+                                    // syn delete here
+                                    char* file_dir = (char*)malloc(sizeof(char)*50);
+                                    strcat(file_dir, username);
+                                    strcat(file_dir, "_client/");
+                                    strcat(file_dir, wanna_delete_filename);
+                                    delete_file_on_client_side(file_dir);
                                     break;
                                 }
                                 break;
@@ -585,7 +603,7 @@ int main(int argc, const char* argv[]) {
                                     }
 
                                     buff[bytes_received] = '\0';
-                                    printf("\nReply from server: %s\n", buff);
+                                    // printf("\nReply from server: %s\n", buff);
                                     
                                     break;
                                     
