@@ -62,7 +62,7 @@ int copyfile1(char* infilename, char* outfileDir) {
 
     infile = fopen(infilename, "r"); // Open the input and output files.
     if (infile == NULL) {
-      open_file_error(infilename);
+      printf("%s not found\n", infilename);
       return 1;
     }
     sprintf(outfilename, "%s/%s", outfileDir, basename(infilename));

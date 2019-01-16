@@ -1,8 +1,12 @@
 #include<dirent.h>
 #include<errno.h>
+#include<libgen.h>
+
+#include "common.h"
+
 #ifndef CLIENT
 #define CLIENT
-#include "common.h"
+
 #define PASS_LEN 30
 #define CODE_LEN 4
 
@@ -34,6 +38,7 @@ int send_msg(int conn_sock, char *message, int msg_len);
 int send_eof_msg(int conn_sock);
 void enter_path_file();
 void create_sub_client_folder(char* sub_folder_name);
+int copyfile(char* infilename, char* outfileDir);
 
 void cmdLOUT (char *str);
 void validArguments (int argc, char *argv[], char *serv_ip, int *serv_port);

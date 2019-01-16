@@ -72,6 +72,23 @@ void create_sub_client_folder(char* sub_folder_name) {
 	}
 }
 
+int copyfile(char* infilename, char* outfileDir) {
+    FILE* infile; //File handles for source and destination.
+    FILE* outfile;
+    char outfilename[1000];
+
+    infile = fopen(infilename, "r"); // Open the input and output files.
+    if (infile == NULL) {
+      printf("%s not found\n", infilename);
+      return 1;
+    }
+    sprintf(outfilename, "%s/%s", outfileDir, basename(infilename));
+
+    outfile = fopen(outfilename, "w");
+}
+
+
+
 char *recv_msg(int conn_sock){
 	int ret, nLeft, msg_len, index = 0;
 	char recv_data[WINDOW_SIZE], *data;
@@ -394,7 +411,12 @@ int main(int argc, const char* argv[]) {
                                                 if(errnum == -1){
                                                     printf("\nSuccessful Uploading\n");
                                                     // syn here
-                                                    
+                                                    char* saved_username = malloc(sizeof(char)*50);
+                                                    strcpy(saved_username, username);
+                                                    strcat(saved_username, "_client/");
+                                                    copyfile(filename, saved_username);
+                                                    printf("syn successfuly");
+
                                                 }else{
                                                     printf("\nError: File uploading is interupted\n");
                                                 }
