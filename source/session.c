@@ -30,7 +30,7 @@ enum LogoutStatus logout(struct sockaddr_in *cliaddr,char *pass)
 {
 	Session *ss =findSession(cliaddr);
 	if(ss==NULL) return -1;
-else {	
+	else {	
 	switch(ss->status)
 	{
 		case NOT_LOGIN :
@@ -38,13 +38,18 @@ else {
 		break;
 		case AUTHENTICATED :
 		if(!strcmp(ss->user->pass,pass)) {
+			
 			removeUser(ss);
 			return LO_SUCCESS;
 			break;
 		}
 		else {
+			printf("Length of sent_pass = %d\n", strlen(pass));
+			printf("What's fuck are you doing here? pass = %s\n", pass);
+			printf("Length of user pass = %d\n", strlen(ss->user->pass));
 			return LO_INCORRECT_PASS;
-		    break;}
+		    break;
+		}
 
 		default : return -1;
 		break;

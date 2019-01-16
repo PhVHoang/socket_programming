@@ -346,7 +346,7 @@ int main(int argc, const char* argv[]) {
                         printf("        |4. Create a new sub-folder                    |\n");
                         printf("        |5. Show other users                           |\n");
                         printf("        |6. Download files from other users            |\n");
-                        printf("        |7. LOGOUT                                     |\n");
+                        printf("        |7. Logout                                     |\n");
                         printf("        ------------------------------------------------\n");
                         printf("\n");
                         printf("Please take your choice: ");
@@ -585,10 +585,20 @@ int main(int argc, const char* argv[]) {
                                 dest[strlen(dest)-1] = '\0';
                                 //fgets(buff, BUFF_SIZE, stdin);
                                 if (strcmp(dest, "y") == 0) {
+                                    char pass[PASS_LEN + 1];
+                                    // memset(dest, '\0', sizeof(dest));
                                     strcpy(buff, "LOUT");
-                                    if (wannaExit(buff)) return;
-                                    cmdLOUT(buff);
+                                    strcat(buff, " ");
+                                    strcat(buff, username);
+                                    printf("Enter your password: ");
+                                    __fpurge(stdin);
+                                    scanf("%s", pass);
+
+                                    strcat(buff, " ");
+                                    strncat(buff, pass, PASS_LEN);
+
                                     msg_len = strlen(buff) + 1;
+                                    printf("buff  = %s\n", buff);
 
                                     if (send_msg(conn_sock, buff, msg_len) == -1) {
                                         printf("Connection closed!\n");
@@ -603,22 +613,23 @@ int main(int argc, const char* argv[]) {
                                     }
 
                                     buff[bytes_received] = '\0';
-                                    // printf("\nReply from server: %s\n", buff);
-                                    
+                                    printf("\nReply from server: %s\n", buff);
+                                    if (buff[0] == '2' && buff[1] == '0')
+                                        inner_loop = 1;
                                     break;
                                     
                                 }
                                 else 
-                                break;
+                                    break;
                             default:
-                                printf("Wrong choice. Please only type 1, 2 or 3\n");
+                                printf("Wrong choice.\n");
                                 break;
                         }
                     } while (inner_loop == 0);
                 }
                 break;
             default:
-                printf("Wrong choice. Make sure that your choice is 1 or 2\n");
+                printf("Wrong choice. Make sure your choice is 1 or 2\n");
                 break;
         }
     }
